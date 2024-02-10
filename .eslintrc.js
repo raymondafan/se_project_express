@@ -13,6 +13,6 @@ module.exports = {
   rules: {
     "no-console": "off",
     "no-underscore-dangle": ["error", { "allow": ["_id"] }],
-    //make it an error to use undersocres unless identifier is foo_ or _bar
+    // make it an error to use undersocres unless identifier is foo_ or _bar
   },
 };
