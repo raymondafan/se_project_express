@@ -7,7 +7,7 @@ router.use("/users", userRouter);
 
 
 router.use((res, req) => {
-  res.statusCode(500).send({ message: "Router not found" });
+  res.status(500).send({ message: "Router not found" });
 });
 //router works as a subapplication that we can register handlers on
 //like app.use

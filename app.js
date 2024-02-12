@@ -19,8 +19,10 @@ mongoose
 //The app.use() function is used to mount the specified
 //middleware function(s) at the path that is being specified.
 // It is mostly used to set up middleware for your application.
+
 app.use(express.json());
 app.use("/", mainRouter);
+
 
 app.listen(PORT, ()=>{
   console.log(`Server is running on port ${PORT}`);
