@@ -27,8 +27,29 @@ const createUser = (req, res) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       console.error(err);
+      if (err.name === "ValidationError") {
+        return res.status(400).send({ message: err.message });
+      }
       return res.status(500).send({ message: err.message });
     });
 };
+const getUser= (req,res)=>{
+const{userId}= req.params;
+User.findById(userId)
+.orFail()
+//if its valid but u dont find matching doc
+//it will throw a " doc.found " error
+.then((user) => res.status(200).send(user))
 
-module.exports = { getUsers, createUser };
+.catch((err) => {
+  console.error(err);
+  if (err.name === "DocumentNotFoundError") {
+    return res.status(404).send({ message: err.message });
+  } else if(err.name === "CastError") {
+//handle cast error (400)
+  }
+  return res.status(500).send({ message: err.message });
+});
+}
+
+module.exports = { getUsers, createUser, getUser};

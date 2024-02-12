@@ -16,6 +16,8 @@ mongoose
   console.log("Connected to DB");
 })
 .catch(console.error);
+
+app.use(express.json());
 app.use("/", mainRouter);
 app.listen(PORT, ()=>{
   console.log(`Server is running on port ${PORT}`);
