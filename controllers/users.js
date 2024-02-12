@@ -17,7 +17,7 @@ const getUsers = (req, res) => {
       //have this in all of .catch() blocks
     });
 };
-
+//POST
 const createUser = (req, res) => {
   const { name, avatar } = req.body;
   //pull info from body of req
