@@ -21,7 +21,7 @@ mongoose
 // It is mostly used to set up middleware for your application.
 
 app.use(express.json());
-app.use("/", mainRouter);
+app.use(mainRouter);
 
 
 app.listen(PORT, ()=>{

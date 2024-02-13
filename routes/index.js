@@ -6,8 +6,8 @@ router.use("/items", clothingItem);
 router.use("/users", userRouter);
 
 
-router.use((res, req) => {
-  res.status(500).send({ message: "Router not found" });
+router.use((req, res) => {
+  res.status(404).send({ message: "Router not found" });
 });
 //router works as a subapplication that we can register handlers on
 //like app.use
