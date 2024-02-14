@@ -5,16 +5,20 @@ const createItem = (req, res) => {
   console.log(req.body);
   const { name, weather, imageURL } = req.body;
 
-  ClothingItem.create({ name, weather, imageURL }).then((item) => {
-    console.log(item);
-    res.send({ data: item }).catch((e) => {
+  ClothingItem.create({ name, weather, imageURL })
+    .then((item) => {
+      console.log(item);
+      res.send({ data: item });
+    })
+    .catch((e) => {
       res.status(500).send({ message: "Error from createItem", e });
     });
-  });
 };
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(200).send(items))
+    .then((items) => {
+      res.status(200).send(items);
+    })
     .catch((e) => {
       res.status(500).send({ message: "Error from getItems", e });
     });
@@ -27,7 +31,9 @@ const updateItem = (req, res) => {
 
   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageURL } })
     .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) => {
+      res.status(200).send({ data: item });
+    })
     .catch((e) => {
       res.status(500).send({ message: "Error from updateItems", e });
     });
@@ -38,7 +44,9 @@ const deleteItem = (req, res) => {
   console.log(itemId);
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(204).send({}))
+    .then((item) => {
+      res.status(204).send({});
+    })
     .catch((e) => {
       res.status(500).send({ message: "Error from deleteItem", e });
     });
@@ -50,7 +58,9 @@ const likeItem = (req, res) =>
     { new: true },
   )
     .orFail()
-    .then((item) => res.status(204).send({ data: item }))
+    .then((item) => {
+      res.status(204).send({ data: item });
+    })
     .catch((e) => {
       res.status(500).send({ message: "Error from likeItem", e });
     });
@@ -59,7 +69,14 @@ const unlikeItem = (req, res) =>
     req.params.itemId,
     { $pull: { likes: req.user._id } }, // remove _id from the array
     { new: true },
-  );
+  )
+    .orFail()
+    .then((item) => {
+      res.status(204).send({ data: item });
+    })
+    .catch((e) => {
+      res.status(500).send({ message: "Error from likeItem", e });
+    });
 module.exports = {
   createItem,
   getItems,
