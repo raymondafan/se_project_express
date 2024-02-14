@@ -49,8 +49,8 @@ const likeItem = (req, res) =>
     { $addToSet: { likes: req.user._id } }, //adds _id to array
     { new: true },
   )
-  .orFail()
-    .then((item) => res.status(204).send({data:item}))
+    .orFail()
+    .then((item) => res.status(204).send({ data: item }))
     .catch((e) => {
       res.status(500).send({ message: "Error from likeItem", e });
     });
@@ -66,5 +66,5 @@ module.exports = {
   updateItem,
   deleteItem,
   likeItem,
-  unlikeItem
+  unlikeItem,
 };
