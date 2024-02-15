@@ -1,4 +1,8 @@
 const User = require("../models/user");
+//export const BAD_REQUEST_STATUS_CODE= 400;
+// ^neds to be in a separate file that will have several constants like this^
+//no hard coded #'s
+// imoirt it into controllers and use that in place of hard coded #s
 
 //GET /users
 const getUsers = (req, res) => {
@@ -27,29 +31,35 @@ const createUser = (req, res) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       console.error(err);
+      // ^gives u info about the error
+      // how youll know unexpected occurs
+      // or else it will occur silently wont be able to figure out what the error was
       if (err.name === "ValidationError") {
+        //checking if err.name equals "ValidationError"
         return res.status(400).send({ message: err.message });
+        //if it does, we send response (400 error)
+        //err.message=> message
       }
       return res.status(500).send({ message: err.message });
     });
 };
-const getUser= (req,res)=>{
-const{userId}= req.params;
-User.findById(userId)
-.orFail()
-//if its valid but u dont find matching doc
-//it will throw a " doc.found " error
-.then((user) => res.status(200).send(user))
+const getUser = (req, res) => {
+  const { userId } = req.params;
+  User.findById(userId)
+    .orFail()
+    //if its valid but u dont find matching doc
+    //it will throw a " doc.found " error
+    .then((user) => res.status(200).send(user))
 
-.catch((err) => {
-  console.error(err);
-  if (err.name === "DocumentNotFoundError") {
-    return res.status(404).send({ message: err.message });
-  } else if(err.name === "CastError") {
-//handle cast error (400)
-  }
-  return res.status(500).send({ message: err.message });
-});
-}
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(404).send({ message: err.message });
+      } else if (err.name === "CastError") {
+        //handle cast error (400)
+      }
+      return res.status(500).send({ message: err.message });
+    });
+};
 
-module.exports = { getUsers, createUser, getUser};
+module.exports = { getUsers, createUser, getUser };

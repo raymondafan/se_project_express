@@ -6,12 +6,19 @@ const createItem = (req, res) => {
   const { name, weather, imageURL } = req.body;
 
   ClothingItem.create({ name, weather, imageURL })
+
     .then((item) => {
       console.log(item);
       res.send({ data: item });
     })
-    .catch((e) => {
-      res.status(500).send({ message: "Error from createItem", e });
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "ValidationError") {
+        res.status(200).send({ message: err.message });
+        return err;
+      }
+
+      return res.status(500).send({ message: "Error from createItem" });
     });
 };
 const getItems = (req, res) => {
@@ -59,7 +66,7 @@ const likeItem = (req, res) =>
   )
     .orFail()
     .then((item) => {
-      res.status(204).send({ data: item });
+      res.send({ data: item });
     })
     .catch((e) => {
       res.status(500).send({ message: "Error from likeItem", e });
@@ -72,7 +79,7 @@ const unlikeItem = (req, res) =>
   )
     .orFail()
     .then((item) => {
-      res.status(204).send({ data: item });
+      res.status(200).send({ data: item });
     })
     .catch((e) => {
       res.status(500).send({ message: "Error from likeItem", e });
