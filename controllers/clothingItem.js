@@ -1,5 +1,6 @@
 const ClothingItem = require("../models/clothingItem");
 
+// post request to baseurl/items
 const createItem = (req, res) => {
   console.log(req);
   console.log(req.body);
@@ -23,6 +24,7 @@ const createItem = (req, res) => {
 };
 const getItems = (req, res) => {
   ClothingItem.find({})
+    .populate("owner")
     .then((items) => {
       res.status(200).send(items);
     })
@@ -52,10 +54,16 @@ const deleteItem = (req, res) => {
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then((item) => {
-      res.status(204).send({});
+      res.status(200).set('Content-Type','application/json').send(item);
     })
     .catch((err) => {
-      res.status(500).send({ message: "Error from deleteItem", err });
+      console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(404).send({ message: err.message });
+      } else if (err.name === "CastError") {
+        return res.status(400).send({ message: err.message });
+      }
+      return res.status(500).send({ message: err.message });
     });
 };
 const likeItem = (req, res) => {
@@ -72,11 +80,17 @@ const likeItem = (req, res) => {
       res.status(200).send({ data: item });
     })
     .catch((err) => {
-      res.status(500).send({ message: "Error from likeItem", err });
+      console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(404).send({ message: err.message });
+      } else if (err.name === "CastError") {
+        return res.status(400).send({ message: err.message });
+      }
+      return res.status(500).send({ message: err.message });
     });
 };
 const unlikeItem = (req, res) => {
-  const {itemId}=req.params;
+  const { itemId } = req.params;
   console.log(req.user._id);
   ClothingItem.findByIdAndUpdate(
     itemId,
@@ -88,7 +102,13 @@ const unlikeItem = (req, res) => {
       res.status(200).send({ data: item });
     })
     .catch((err) => {
-      res.status(500).send({ message: "Error from likeItem", err });
+      console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(404).send({ message: err.message });
+      } else if (err.name === "CastError") {
+        return res.status(400).send({ message: err.message });
+      }
+      return res.status(500).send({ message: err.message });
     });
 };
 module.exports = {
