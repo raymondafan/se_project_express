@@ -5,7 +5,7 @@ const createItem = (req, res) => {
   console.log(req.body);
   const { name, weather, imageUrl } = req.body;
 
-  ClothingItem.create({ name, weather, imageUrl })
+  ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
 
     .then((item) => {
       console.log(item);
@@ -14,7 +14,7 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        res.status(200).send({ message: err.message });
+        res.status(400).send({ message: err.message });
         return err;
       }
 
@@ -26,8 +26,8 @@ const getItems = (req, res) => {
     .then((items) => {
       res.status(200).send(items);
     })
-    .catch((e) => {
-      res.status(500).send({ message: "Error from getItems", e });
+    .catch((err) => {
+      res.status(500).send({ message: "Error from getItems", err });
     });
 };
 
@@ -41,8 +41,8 @@ const updateItem = (req, res) => {
     .then((item) => {
       res.status(200).send({ data: item });
     })
-    .catch((e) => {
-      res.status(500).send({ message: "Error from updateItems", e });
+    .catch((err) => {
+      res.status(500).send({ message: "Error from updateItems", err });
     });
 };
 
@@ -54,26 +54,32 @@ const deleteItem = (req, res) => {
     .then((item) => {
       res.status(204).send({});
     })
-    .catch((e) => {
-      res.status(500).send({ message: "Error from deleteItem", e });
+    .catch((err) => {
+      res.status(500).send({ message: "Error from deleteItem", err });
     });
 };
-const likeItem = (req, res) =>
+const likeItem = (req, res) => {
+  const { itemId } = req.params;
+  console.log(req.user._id);
   ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
+    itemId,
+
     { $addToSet: { likes: req.user._id } }, //adds _id to array
     { new: true },
   )
     .orFail()
     .then((item) => {
-      res.send({ data: item });
+      res.status(200).send({ data: item });
     })
-    .catch((e) => {
-      res.status(500).send({ message: "Error from likeItem", e });
+    .catch((err) => {
+      res.status(500).send({ message: "Error from likeItem", err });
     });
-const unlikeItem = (req, res) =>
+};
+const unlikeItem = (req, res) => {
+  const {itemId}=req.params;
+  console.log(req.user._id);
   ClothingItem.findByIdAndUpdate(
-    req.params.itemId,
+    itemId,
     { $pull: { likes: req.user._id } }, // remove _id from the array
     { new: true },
   )
@@ -81,9 +87,10 @@ const unlikeItem = (req, res) =>
     .then((item) => {
       res.status(200).send({ data: item });
     })
-    .catch((e) => {
-      res.status(500).send({ message: "Error from likeItem", e });
+    .catch((err) => {
+      res.status(500).send({ message: "Error from likeItem", err });
     });
+};
 module.exports = {
   createItem,
   getItems,
