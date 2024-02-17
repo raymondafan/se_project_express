@@ -24,7 +24,9 @@ const createItem = (req, res) => {
         return err;
       }
 
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: "Error from createItem" });
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Error from createItem" });
     });
 };
 const getItems = (req, res) => {
@@ -33,25 +35,29 @@ const getItems = (req, res) => {
     .then((items) => {
       res.send(items);
     })
-    .catch((err) => {
-      res.status(INTERNAL_SERVER_ERROR).send({ message: "Error from getItems", err });
+    .catch(() => {
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Error from getItems" });
     });
 };
 
-const updateItem = (req, res) => {
-  const { itemId } = req.params;
+// const updateItem = (req, res) => {
+//   const { itemId } = req.params;
 
-  const { imageUrl } = req.body;
+//   const { imageUrl } = req.body;
 
-  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
-    .orFail()
-    .then((item) => {
-      res.status(OK).send({ data: item });
-    })
-    .catch((err) => {
-      res.status(INTERNAL_SERVER_ERROR).send({ message: "Error from updateItems", err });
-    });
-};
+//   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
+//     .orFail()
+//     .then((item) => {
+//       res.status(OK).send({ data: item });
+//     })
+//     .catch(() => {
+//       res
+//         .status(INTERNAL_SERVER_ERROR)
+//         .send({ message: "Error from updateItems" });
+//     });
+// };
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
@@ -119,7 +125,7 @@ const unlikeItem = (req, res) => {
 module.exports = {
   createItem,
   getItems,
-  updateItem,
+  // updateItem,
   deleteItem,
   likeItem,
   unlikeItem,
