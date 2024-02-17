@@ -1,5 +1,10 @@
 const ClothingItem = require("../models/clothingItem");
-
+const {
+  OK,
+  BAD_REQUEST,
+  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
+} = require("../utils/errors");
 // post request to baseurl/items
 const createItem = (req, res) => {
   console.log(req);
@@ -15,21 +20,21 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        res.status(400).send({ message: err.message });
+        res.status(BAD_REQUEST).send({ message: err.message });
         return err;
       }
 
-      return res.status(500).send({ message: "Error from createItem" });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: "Error from createItem" });
     });
 };
 const getItems = (req, res) => {
   ClothingItem.find({})
     .populate("owner")
     .then((items) => {
-      res.status(200).send(items);
+      res.send(items);
     })
     .catch((err) => {
-      res.status(500).send({ message: "Error from getItems", err });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: "Error from getItems", err });
     });
 };
 
@@ -41,10 +46,10 @@ const updateItem = (req, res) => {
   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
     .orFail()
     .then((item) => {
-      res.status(200).send({ data: item });
+      res.status(OK).send({ data: item });
     })
     .catch((err) => {
-      res.status(500).send({ message: "Error from updateItems", err });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: "Error from updateItems", err });
     });
 };
 
@@ -54,16 +59,16 @@ const deleteItem = (req, res) => {
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then((item) => {
-      res.status(200).set('Content-Type','application/json').send(item);
+      res.status(OK).set("Content-Type", "application/json").send(item);
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: err.message });
       } else if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: err.message });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
 const likeItem = (req, res) => {
@@ -77,16 +82,16 @@ const likeItem = (req, res) => {
   )
     .orFail()
     .then((item) => {
-      res.status(200).send({ data: item });
+      res.status(OK).send({ data: item });
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: err.message });
       } else if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: err.message });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
 const unlikeItem = (req, res) => {
@@ -99,16 +104,16 @@ const unlikeItem = (req, res) => {
   )
     .orFail()
     .then((item) => {
-      res.status(200).send({ data: item });
+      res.status(OK).send({ data: item });
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: err.message });
       } else if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: err.message });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
 module.exports = {
