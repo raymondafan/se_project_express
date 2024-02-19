@@ -3,11 +3,13 @@ const User = require("../models/user");
 // ^neds to be in a separate file that will have several constants like this^
 //no hard coded #'s
 // imoirt it into controllers and use that in place of hard coded #s
-const {  OK,
+const {
+  OK,
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
-  CREATED } = require("../utils/errors");
+  CREATED,
+} = require("../utils/errors");
 //GET /users
 const getUsers = (req, res) => {
   User.find({})
@@ -58,7 +60,7 @@ const getUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: "Invalid data" });
       } else if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
