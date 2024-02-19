@@ -1,7 +1,3 @@
-//400
-//404
-//500
-//200
 const CREATED = 201;
 const OK = 200;
 const BAD_REQUEST = 400;

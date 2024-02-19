@@ -71,7 +71,7 @@ const deleteItem = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: "Invalid data" });
-      } else if (err.name === "CastError") {
+      } if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
       return res
@@ -85,7 +85,7 @@ const likeItem = (req, res) => {
   ClothingItem.findByIdAndUpdate(
     itemId,
 
-    { $addToSet: { likes: req.user._id } }, //adds _id to array
+    { $addToSet: { likes: req.user._id } }, // adds _id to array
     { new: true },
   )
     .orFail()
@@ -96,7 +96,7 @@ const likeItem = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: "Invalid data" });
-      } else if (err.name === "CastError") {
+      } if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
       return res
@@ -120,7 +120,7 @@ const unlikeItem = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: "Invalid data" });
-      } else if (err.name === "CastError") {
+      } if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
       return res
