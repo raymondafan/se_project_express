@@ -29,11 +29,11 @@ const getUsers = (req, res) => {
 };
 // POST
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
+  const { name, avatar, email, password } = req.body;
   // pull info from body of req
   // "req.body" has info that is sent in the
   // body of the request
-  User.create({ name, avatar })
+  User.create({ name, avatar})
     .then((user) => res.status(CREATED).send(user))
     .catch((err) => {
       console.error(err);
