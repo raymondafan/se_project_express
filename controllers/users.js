@@ -33,13 +33,21 @@ const createUser = (req, res) => {
   // pull info from body of req
   // "req.body" has info that is sent in the
   // body of the request
-  User.create({ name, avatar})
+  User.create({ name, avatar, email, password })
     .then((user) => res.status(CREATED).send(user))
     .catch((err) => {
       console.error(err);
       // ^gives u info about the error
       // how youll know unexpected occurs
       // or else it will occur silently wont be able to figure out what the error was
+      if (err.code === 11000) {
+        // Assuming duplicate key error is always related to the "email" field
+        return res
+          .status(BAD_REQUEST)
+          .send({
+            message: "Email already exists. Please use a different email.",
+          });
+      }
       if (err.name === "ValidationError") {
         // checking if err.name equals "ValidationError"
         return res.status(BAD_REQUEST).send({ message: err.message });
@@ -61,7 +69,8 @@ const getUser = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: "Invalid data" });
-      } if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
