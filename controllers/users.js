@@ -9,7 +9,12 @@ const {
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
   CREATED,
+  UNAUTHORIZED,
 } = require("../utils/errors");
+
+const jwt = require("jsonwebtoken");
+
+const { JWT_SECRET}= require("../utils/config");
 // GET /users
 const getUsers = (req, res) => {
   User.find({})
@@ -41,12 +46,10 @@ const createUser = (req, res) => {
       // how youll know unexpected occurs
       // or else it will occur silently wont be able to figure out what the error was
       if (err.code === 11000) {
-        // Assuming duplicate key error is always related to the "email" field
-        return res
-          .status(BAD_REQUEST)
-          .send({
-            message: "Email already exists. Please use a different email.",
-          });
+        //mongodb duplicate error
+        return res.status(BAD_REQUEST).send({
+          message: "Email already exists. Please use a different email.",
+        });
       }
       if (err.name === "ValidationError") {
         // checking if err.name equals "ValidationError"
@@ -77,4 +80,20 @@ const getUser = (req, res) => {
     });
 };
 
-module.exports = { getUsers, createUser, getUser };
+const login = (req, res) => {
+  const { email, password } = req.body;
+  if (!email) {
+    res.send(BAD_REQUEST).send({ message: err.message });
+  }
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      res.send({ token });
+    })
+    .catch((err) => {
+      res.status(UNAUTHORIZED).send({ message: err.message });
+    });
+};
+module.exports = { getUsers, createUser, getUser, login };
