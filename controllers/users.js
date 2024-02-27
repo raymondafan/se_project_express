@@ -96,4 +96,7 @@ const login = (req, res) => {
       res.status(UNAUTHORIZED).send({ message: err.message });
     });
 };
-module.exports = { getUsers, createUser, getUser, login };
+const getCurrentUser= (req,res)=>{
+
+};
+module.exports = { getUsers, createUser, getUser, login, getCurrentUser};

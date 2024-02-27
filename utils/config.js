@@ -1,5 +1,5 @@
-// const JWT_SECRET = h;
+const JWT_SECRET = "secret-stuff";
 
-// module.exports = {
-//   JWT_SECRET,
-// };
+module.exports = {
+  JWT_SECRET,
+};
