@@ -13,8 +13,8 @@ const {
 } = require("../utils/errors");
 
 const jwt = require("jsonwebtoken");
-
-const { JWT_SECRET}= require("../utils/config");
+const bcrypt = require("bcryptjs");
+const { JWT_SECRET } = require("../utils/config");
 // GET /users
 const getUsers = (req, res) => {
   User.find({})
@@ -38,8 +38,15 @@ const createUser = (req, res) => {
   // pull info from body of req
   // "req.body" has info that is sent in the
   // body of the request
-  User.create({ name, avatar, email, password })
-    .then((user) => res.status(CREATED).send(user))
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => {
+      return User.create({ name, avatar, email, password: hash });
+    })
+    .then((user) => {
+      console.log(user);
+      res.status(CREATED).send(user);
+    })
     .catch((err) => {
       console.error(err);
       // ^gives u info about the error
@@ -60,7 +67,7 @@ const createUser = (req, res) => {
       return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
-const getUser = (req, res) => {
+const getCurrentUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
     .orFail()
@@ -85,18 +92,19 @@ const login = (req, res) => {
   if (!email) {
     res.send(BAD_REQUEST).send({ message: err.message });
   }
-  return User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password, res)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.send({ token });
+      res.status(OK).send({ token });
     })
     .catch((err) => {
-      res.status(UNAUTHORIZED).send({ message: err.message });
+      if (err.message === "Incorrect email or password") {
+        return res.status(UNAUTHORIZED).send({ message: err.message });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
-const getCurrentUser= (req,res)=>{
 
-};
-module.exports = { getUsers, createUser, getUser, login, getCurrentUser};
+module.exports = { getUsers, createUser, login, getCurrentUser };
