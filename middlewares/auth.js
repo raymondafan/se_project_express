@@ -5,12 +5,15 @@ handleAuthErr = (res) => {
   res.status(UNAUTHORIZED).send({ message: "Authorization Error" });
 };
 
+const extractBearerToken = (header) => {
+  return header.replace("Bearer ", "");
+};
 module.exports.middleware = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith("Bearer ")) {
     return handleAuthErr(res);
   }
-  const token = authorization.replace("Bearer ", "");
+  const token = extractBearerToken(authorization);
   let payload;
 
   try {
