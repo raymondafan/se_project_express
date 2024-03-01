@@ -13,7 +13,7 @@ const {
 router.post("/", createItem); // baserul/items
 
 // Read
-router.get("/", getItems);
+// router.get("/", getItems);
 
 // update
 // router.put("/:itemId", updateItem); //baseurl/items/itemid

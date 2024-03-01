@@ -68,8 +68,7 @@ const createUser = (req, res) => {
     });
 };
 const getCurrentUser = (req, res) => {
-  const { userId } = req.params;
-  User.findById(userId)
+  User.findById(req.user._id)
     .orFail()
     // if its valid but u dont find matching doc
     // it will throw a " doc.found " error
@@ -90,14 +89,14 @@ const getCurrentUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
   if (!email) {
-    res.send(BAD_REQUEST).send({ message: err.message });
+    return res.send(BAD_REQUEST).send({ message: err.message });
   }
   return User.findUserByCredentials(email, password, res)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.status(OK).send({ token });
+      return res.status(OK).send({ token });
     })
     .catch((err) => {
       if (err.message === "Incorrect email or password") {
@@ -107,4 +106,23 @@ const login = (req, res) => {
     });
 };
 
-module.exports = { getUsers, createUser, login, getCurrentUser };
+const updateUser = (req, res) => {
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name: "Bex", avatar: "" },
+    {
+      new: true, // the then handler receives the updated entry as input
+      runValidators: true, // the data will be validated before the update
+      upsert: true, // if the user entry wasn't found, it will be created
+    },
+  )
+    .then((user) => res.send({ data: user }))
+    .catch((err) => {
+      console.error(err);
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Data validation failed or another error occured." });
+    });
+};
+
+module.exports = { getUsers, createUser, login, getCurrentUser, updateUser };

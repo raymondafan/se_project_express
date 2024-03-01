@@ -8,7 +8,7 @@ handleAuthErr = (res) => {
 const extractBearerToken = (header) => {
   return header.replace("Bearer ", "");
 };
-module.exports.middleware = (req, res, next) => {
+module.exports = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith("Bearer ")) {
     return handleAuthErr(res);
@@ -21,6 +21,7 @@ module.exports.middleware = (req, res, next) => {
   } catch (err) {
     return handleAuthErr(res);
   }
+
   req.user = payload;
   next();
 };
