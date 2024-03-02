@@ -15,6 +15,7 @@ const {
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { JWT_SECRET } = require("../utils/config");
+const user = require("../models/user");
 // GET /users
 const getUsers = (req, res) => {
   User.find({})
@@ -109,19 +110,30 @@ const login = (req, res) => {
 const updateUser = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
-    { name: "Bex", avatar: "" },
+    { name: req.body.name, avatar: req.body.avatar },
     {
       new: true, // the then handler receives the updated entry as input
       runValidators: true, // the data will be validated before the update
       upsert: true, // if the user entry wasn't found, it will be created
     },
   )
-    .then((user) => res.send({ data: user }))
+    .orFail()
+    .then((user) => {
+      if (!user) {
+        return res.status(NOT_FOUND).send({ message: "User not found" });
+      }
+      return res.status(OK).send({ data: user });
+    })
     .catch((err) => {
       console.error(err);
-      res
+      if (err.name === "ValidationError") {
+        // checking if err.name equals "ValidationError"
+        return res.status(BAD_REQUEST).send({ message: err.message });
+      }
+
+      return res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Data validation failed or another error occured." });
+        .send({ message: "Internal server error" });
     });
 };
 
