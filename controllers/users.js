@@ -90,7 +90,7 @@ const getCurrentUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
   if (!email) {
-    return res.send(BAD_REQUEST).send({ message: err.message });
+    return res.status(BAD_REQUEST).send({ message: err.message });
   }
   return User.findUserByCredentials(email, password, res)
     .then((user) => {
