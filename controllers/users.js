@@ -73,7 +73,9 @@ const getCurrentUser = (req, res) => {
     .orFail()
     // if its valid but u dont find matching doc
     // it will throw a " doc.found " error
-    .then((user) => res.status(OK).send(user))
+    .then((user) => {
+      return res.status(OK).send(user);
+    })
 
     .catch((err) => {
       console.error(err);
@@ -90,7 +92,7 @@ const getCurrentUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
   if (!email) {
-    return res.status(BAD_REQUEST).send({ message: err.message });
+    return res.status(BAD_REQUEST).send({ message: "Bad Request" });
   }
   return User.findUserByCredentials(email, password, res)
     .then((user) => {
@@ -115,11 +117,14 @@ const updateUser = (req, res) => {
       new: true, // the then handler receives the updated entry as input
       runValidators: true, // the data will be validated before the update
       upsert: true, // if the user entry wasn't found, it will be created
+      select: "-password",
     },
   )
-    .orFail()
+    .orFail(() => {
+      return { name: null, avatar: null };
+    })
     .then((user) => {
-      if (!user) {
+      if (!user || !user._id) {
         return res.status(NOT_FOUND).send({ message: "User not found" });
       }
       return res.status(OK).send({ data: user });

@@ -31,25 +31,25 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8,
+    select: false,
   },
 });
 userSchema.statics.findUserByCredentials = function findUserByCredentials(
   email,
   password,
-  res
 ) {
-  return this.findOne({ email }) // this — the User model
+  return this.findOne({ email })
+    .select("+password") // this — the User model
     .then((user) => {
       // not found - rejecting the promise
       if (!user) {
-        return res.status(401).send({message: "Incorrect email or password"});
+        return Promise.reject(new Error("Incorrect email or password"));
       }
 
       // found - comparing hashes
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
-          return res.status(401).send({message: "Incorrect email or password"});
+          return Promise.reject(new Error("Incorrect email or password"));
         }
         return user;
       });
