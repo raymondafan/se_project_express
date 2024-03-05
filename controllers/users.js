@@ -91,20 +91,29 @@ const getCurrentUser = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
-  if (!email) {
+  console.log("Received request with email:", email, "and password:", password);
+  if (!email || !password) {
+    console.log("Bad Request: Missing email or password", email);
     return res.status(BAD_REQUEST).send({ message: "Bad Request" });
   }
+  console.log("Proceeding with authentication...");
   return User.findUserByCredentials(email, password, res)
     .then((user) => {
+      console.log("User authenticated:", user);
+
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
+      console.log("Sending response with token:", token);
       return res.status(OK).send({ token });
     })
     .catch((err) => {
+      console.log("Authentication error:", err.message);
+
       if (err.message === "Incorrect email or password") {
-        return res.status(UNAUTHORIZED).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: err.message });
       }
+
       return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
