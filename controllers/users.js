@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 // export const BAD_REQUEST_STATUS_CODE= 400;
 // ^neds to be in a separate file that will have several constants like this^
@@ -10,30 +12,12 @@ const {
   INTERNAL_SERVER_ERROR,
   CREATED,
   UNAUTHORIZED,
-  REQUEST_CONFLICT
+  REQUEST_CONFLICT,
 } = require("../utils/errors");
 
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
 const { JWT_SECRET } = require("../utils/config");
-const user = require("../models/user");
-// GET /users
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => {
-      // prevents response from beig sent
-      res.status(OK).send(users);
-    })
-    // user.find is asynch so use .then, returns user that we find
-    .catch((err) => {
-      console.error(err);
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
-      // not really checking for specific types of errors
-      // because there is not rlly any errors that we can specifically
-      // check for or handle
-      // have this in all of .catch() blocks
-    });
-};
+
+
 // POST
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
@@ -42,12 +26,8 @@ const createUser = (req, res) => {
   // body of the request
   bcrypt
     .hash(password, 10)
-    .then((hash) => {
-      return User.create({ name, avatar, email, password: hash });
-    })
-    .then((user) => {
-      return User.findById(user._id).select('-password');
-    })
+    .then((hash) => User.create({ name, avatar, email, password: hash }))
+    .then((user) => User.findById(user._id).select("-password"))
     .then((userWithoutPassword) => {
       res.status(CREATED).send(userWithoutPassword);
     })
@@ -57,7 +37,7 @@ const createUser = (req, res) => {
       // how youll know unexpected occurs
       // or else it will occur silently wont be able to figure out what the error was
       if (err.code === 11000) {
-        //mongodb duplicate error
+        // mongodb duplicate error
         return res.status(REQUEST_CONFLICT).send({
           message: "Email already exists. Please use a different email.",
         });
@@ -76,9 +56,7 @@ const getCurrentUser = (req, res) => {
     .orFail()
     // if its valid but u dont find matching doc
     // it will throw a " doc.found " error
-    .then((user) => {
-      return res.status(OK).send(user);
-    })
+    .then((user) => res.status(OK).send(user))
 
     .catch((err) => {
       console.error(err);
@@ -114,7 +92,7 @@ const login = (req, res) => {
       console.log("Authentication error:", err.message);
 
       if (err.message === "Incorrect email or password") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return res.status(UNAUTHORIZED).send({ message: err.message });
       }
 
       return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
@@ -128,13 +106,10 @@ const updateUser = (req, res) => {
     {
       new: true, // the then handler receives the updated entry as input
       runValidators: true, // the data will be validated before the update
-      upsert: true, // if the user entry wasn't found, it will be created
       select: "-password",
     },
   )
-    .orFail(() => {
-      return { name: null, avatar: null };
-    })
+    .orFail(() => ({ name: null, avatar: null }))
     .then((user) => {
       if (!user || !user._id) {
         return res.status(NOT_FOUND).send({ message: "User not found" });
@@ -154,4 +129,4 @@ const updateUser = (req, res) => {
     });
 };
 
-module.exports = { getUsers, createUser, login, getCurrentUser, updateUser };
+module.exports = { createUser, login, getCurrentUser, updateUser };

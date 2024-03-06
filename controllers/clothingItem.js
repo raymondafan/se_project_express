@@ -56,27 +56,32 @@ const getItems = (req, res) => {
 //     .catch(() => {
 //       res
 //         .status(INTERNAL_SERVER_ERROR)
-//         .send({ message: "Error from updateItems" });
+//         .send({ message: "Error from updateItems" })
 //     });
-// };
+// }
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
   console.log(itemId);
+
   ClothingItem.findById(itemId)
     .then((item) => {
       if (!item) {
         return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
+
       if (item.owner.toString() !== req.user._id.toString()) {
         return res.status(FORBIDDEN).send({ message: "Permission Denied" });
       }
+
+
       return ClothingItem.findByIdAndDelete(itemId);
     })
     .then((deletedItem) => {
-      if (deletedItem) {
-        res.status(OK).send(deletedItem);
+      if (!deletedItem) {
+        return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
+     return res.send(deletedItem);
     })
     .catch((err) => {
       console.error(err);
@@ -88,13 +93,15 @@ const deleteItem = (req, res) => {
         .send({ message: "An error has occurred on the server." });
     });
 };
+
+
 const likeItem = (req, res) => {
   const { itemId } = req.params;
   console.log(req.user._id);
   ClothingItem.findByIdAndUpdate(
     itemId,
 
-    { $addToSet: { likes: req.user._id } }, // adds _id to array
+    { $addToSet: { likes: req.user._id } }, // adds _id to arra
     { new: true },
   )
     .orFail()
