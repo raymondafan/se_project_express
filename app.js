@@ -5,7 +5,9 @@ const mongoose= require("mongoose");
 const mainRouter= require("./routes/index");
 
 const {PORT= 3001} = process.env;
+const cors = require("cors");
 
+app.use(cors());
 // process.env allos u to vary port depending of what .env file to specify
 // port as something diff when u use a diff port
 

@@ -4,6 +4,7 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
+  FORBIDDEN,
 } = require("../utils/errors");
 // post request to baseurl/items
 const createItem = (req, res) => {
@@ -62,17 +63,25 @@ const getItems = (req, res) => {
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
   console.log(itemId);
-  ClothingItem.findByIdAndDelete(itemId)
-    .orFail()
+  ClothingItem.findById(itemId)
     .then((item) => {
-      res.status(OK).set("Content-Type", "application/json").send(item);
+      if (!item) {
+        return res.status(NOT_FOUND).send({ message: "Item not found" });
+      }
+      if (item.owner.toString() !== req.user._id.toString()) {
+        return res.status(FORBIDDEN).send({ message: "Permission Denied" });
+      }
+      return ClothingItem.findByIdAndDelete(itemId);
+    })
+    .then((deletedItem) => {
+      if (deletedItem) {
+        res.status(OK).send(deletedItem);
+      }
     })
     .catch((err) => {
       console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: "Invalid data" });
-      } if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid Data" });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
@@ -96,7 +105,8 @@ const likeItem = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: "Invalid data" });
-      } if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
       return res
@@ -120,7 +130,8 @@ const unlikeItem = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: "Invalid data" });
-      } if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
       return res
