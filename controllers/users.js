@@ -10,6 +10,7 @@ const {
   INTERNAL_SERVER_ERROR,
   CREATED,
   UNAUTHORIZED,
+  REQUEST_CONFLICT
 } = require("../utils/errors");
 
 const jwt = require("jsonwebtoken");
@@ -45,8 +46,10 @@ const createUser = (req, res) => {
       return User.create({ name, avatar, email, password: hash });
     })
     .then((user) => {
-      console.log(user);
-      res.status(CREATED).send(user);
+      return User.findById(user._id).select('-password');
+    })
+    .then((userWithoutPassword) => {
+      res.status(CREATED).send(userWithoutPassword);
     })
     .catch((err) => {
       console.error(err);
@@ -55,7 +58,7 @@ const createUser = (req, res) => {
       // or else it will occur silently wont be able to figure out what the error was
       if (err.code === 11000) {
         //mongodb duplicate error
-        return res.status(BAD_REQUEST).send({
+        return res.status(REQUEST_CONFLICT).send({
           message: "Email already exists. Please use a different email.",
         });
       }
