@@ -74,15 +74,14 @@ const deleteItem = (req, res) => {
         return res.status(FORBIDDEN).send({ message: "Permission Denied" });
       }
 
+      return ClothingItem.findByIdAndDelete(itemId).then((deletedItem) => {
+        if (!deletedItem) {
+          return res.status(NOT_FOUND).send({ message: "Item not found" });
+        }
+        return res.send(deletedItem);
+      });
+    })
 
-      return ClothingItem.findByIdAndDelete(itemId);
-    })
-    .then((deletedItem) => {
-      if (!deletedItem) {
-        return res.status(NOT_FOUND).send({ message: "Item not found" });
-      }
-     return res.send(deletedItem);
-    })
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
@@ -93,7 +92,6 @@ const deleteItem = (req, res) => {
         .send({ message: "An error has occurred on the server." });
     });
 };
-
 
 const likeItem = (req, res) => {
   const { itemId } = req.params;
