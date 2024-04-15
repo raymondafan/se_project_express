@@ -32,7 +32,6 @@ const createItem = (req, res) => {
 };
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .populate("owner")
     .then((items) => {
       res.send(items);
     })
