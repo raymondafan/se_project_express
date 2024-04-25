@@ -7,19 +7,16 @@ const User = require("../models/user");
 // imoirt it into controllers and use that in place of hard coded #s
 const {
   OK,
-  BAD_REQUEST,
-  NOT_FOUND,
-  INTERNAL_SERVER_ERROR,
   CREATED,
-  UNAUTHORIZED,
-  REQUEST_CONFLICT,
+  handleErrors,
+  BadRequestError,
+  NotFoundError,
 } = require("../utils/errors");
 
 const { JWT_SECRET } = require("../utils/config");
 
-
 // POST
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   // pull info from body of req
   // "req.body" has info that is sent in the
@@ -32,26 +29,11 @@ const createUser = (req, res) => {
       res.status(CREATED).send(userWithoutPassword);
     })
     .catch((err) => {
-      console.error(err);
-      // ^gives u info about the error
-      // how youll know unexpected occurs
-      // or else it will occur silently wont be able to figure out what the error was
-      if (err.code === 11000) {
-        // mongodb duplicate error
-        return res.status(REQUEST_CONFLICT).send({
-          message: "Email already exists. Please use a different email.",
-        });
-      }
-      if (err.name === "ValidationError") {
-        // checking if err.name equals "ValidationError"
-        return res.status(BAD_REQUEST).send({ message: err.message });
-        // if it does, we send response (400 error)
-        // err.message=> message
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      const message = "Failed to create user.";
+      handleErrors(err, message, next);
     });
 };
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail()
     // if its valid but u dont find matching doc
@@ -59,23 +41,20 @@ const getCurrentUser = (req, res) => {
     .then((user) => res.status(OK).send(user))
 
     .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: "Invalid data" });
-      }
-      if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      const message = "Failed to find user.";
+      handleErrors(err, message, next);
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
   console.log("Received request with email:", email, "and password:", password);
+
   if (!email || !password) {
     console.log("Bad Request: Missing email or password", email);
-    return res.status(BAD_REQUEST).send({ message: "Bad Request" });
+    const errorMessage = "Missing email or password.";
+    const error = new BadRequestError(errorMessage);
+    return next(error);
   }
   console.log("Proceeding with authentication...");
   return User.findUserByCredentials(email, password, res)
@@ -89,17 +68,12 @@ const login = (req, res) => {
       return res.status(OK).send({ token });
     })
     .catch((err) => {
-      console.log("Authentication error:", err.message);
-
-      if (err.message === "Incorrect email or password") {
-        return res.status(UNAUTHORIZED).send({ message: err.message });
-      }
-
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      const message = "Incorrect email or password";
+      handleErrors(err, message, next);
     });
 };
 
-const updateUser = (req, res) => {
+const updateUser = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name: req.body.name, avatar: req.body.avatar },
@@ -112,20 +86,15 @@ const updateUser = (req, res) => {
     .orFail(() => ({ name: null, avatar: null }))
     .then((user) => {
       if (!user || !user._id) {
-        return res.status(NOT_FOUND).send({ message: "User not found" });
+        const errorMessage = "User not found.";
+        const error = new NotFoundError(errorMessage);
+        return next(error);
       }
       return res.status(OK).send({ data: user });
     })
     .catch((err) => {
-      console.error(err);
-      if (err.name === "ValidationError") {
-        // checking if err.name equals "ValidationError"
-        return res.status(BAD_REQUEST).send({ message: err.message });
-      }
-
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal server error" });
+      const message = "An error occurred while updating the user.";
+      handleErrors(err, message, next);
     });
 };
 
