@@ -89,6 +89,8 @@ const handleErrors = (err, message, next) => {
     const error = new UnauthorizedError(errorMessage);
     return next(error);
   }
+  
+
 };
 
 module.exports = {
@@ -108,6 +110,6 @@ module.exports = {
   NotFoundError,
   ConflictError,
 };
-  // const errorMessage = "User not found.";
-    //     const error = new NotFoundError(errorMessage);
-    //     return next(error);
+// const errorMessage = "User not found.";
+//     const error = new NotFoundError(errorMessage);
+//     return next(error);
