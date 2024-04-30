@@ -19,6 +19,9 @@ module.exports.validateClothingItemCreation = celebrate({
       "string.empty": 'The "imageUrl" field must be filled in',
       "string.uri": 'the "imageUrl" field must be a valid url',
     }),
+    weather: Joi.string().valid("hot", "cold", "warm").required().messages({
+      "string.empty": 'The "weather" field must be filled in',
+    }),
   }),
 });
 module.exports.validateCreateUser = celebrate({
@@ -55,10 +58,9 @@ module.exports.validateUserLogin = celebrate({
 module.exports.validateId = celebrate({
   params: Joi.object().keys({
     itemId: Joi.string().length(24).hex().required().messages({
-      "string.hex": 'The ID must be a hexadecimal value',
-      "string.length": 'The ID must be 24 characters long',
-      "any.required": 'The ID field is required',
+      "string.hex": "The ID must be a hexadecimal value",
+      "string.length": "The ID must be 24 characters long",
+      "any.required": "The ID field is required",
     }),
   }),
 });
-
