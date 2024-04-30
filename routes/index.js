@@ -5,9 +5,14 @@ const { NOT_FOUND } = require("../utils/errors");
 const { createUser, login } = require("../controllers/users");
 const authorization = require("../middlewares/auth");
 const { getItems } = require("../controllers/clothingItem");
+const {
+  validateUserLogin,
+  validateCreateUser,
+  validateId,
+} = require("../middlewares/validation");
 
-router.post("/signin", login);
-router.post("/signup", createUser);
+router.post("/signin", validateUserLogin, login);
+router.post("/signup", validateCreateUser, createUser);
 router.get("/items", getItems);
 
 router.use(authorization);

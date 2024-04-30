@@ -5,14 +5,17 @@ const {
   deleteItem,
   likeItem,
   unlikeItem,
+  getItems,
 } = require("../controllers/clothingItem");
+const { validateClothingItemCreation, validateId } = require("../middlewares/validation");
 // CRUD
 
 // Create
-router.post("/", createItem); // baserul/items
+router.post("/", validateClothingItemCreation, createItem); // baserul/items
 
 // Read
-// router.get("/", getItems);
+router.get("/", validateId, getItems);
+
 
 // update
 // router.put("/:itemId", updateItem); //baseurl/items/itemid
