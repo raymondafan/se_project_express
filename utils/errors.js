@@ -89,8 +89,6 @@ const handleErrors = (err, message, next) => {
     const error = new UnauthorizedError(errorMessage);
     return next(error);
   }
-  
-
 };
 
 module.exports = {
