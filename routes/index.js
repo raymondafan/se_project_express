@@ -8,7 +8,6 @@ const { getItems } = require("../controllers/clothingItem");
 const {
   validateUserLogin,
   validateCreateUser,
-  validateId,
 } = require("../middlewares/validation");
 
 router.post("/signin", validateUserLogin, login);
