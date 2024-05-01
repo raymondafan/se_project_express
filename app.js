@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const mainRouter = require("./routes/index");
 const { errors } = require("celebrate");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 const { PORT = 3001 } = process.env;
 
 app.use(cors());
@@ -24,9 +25,11 @@ mongoose
 
 app.use(express.json());
 
+app.use(requestLogger);
 app.use(mainRouter);
-app.use(errors());
-app.use(errorHandler.errorHandler);
+app.use(errorLogger); // enabling the error logger
+app.use(errors()); // celebrate error handler
+app.use(errorHandler.errorHandler); //centralized error handler
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
