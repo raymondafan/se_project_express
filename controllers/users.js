@@ -9,11 +9,12 @@ const {
   OK,
   CREATED,
   handleErrors,
-  BadRequestError,
+
   NotFoundError,
 } = require("../utils/errors");
 
 const { JWT_SECRET } = require("../utils/config");
+const { BadRequestError } = require("../utils/errors/Bad_Request_Error");
 
 // POST
 const createUser = (req, res, next) => {

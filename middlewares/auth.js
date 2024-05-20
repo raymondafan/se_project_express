@@ -1,10 +1,10 @@
 const jwt = require("jsonwebtoken");
-const { UNAUTHORIZED } = require("../utils/errors");
+const {UnauthorizedError}= require("../utils/errors")
 const { JWT_SECRET } = require("../utils/config");
 
-const handleAuthErr = (res) => (
-    res.status(UNAUTHORIZED).send({ message: "Authorization Error" })
-  );
+const handleAuthErr = () => {
+  throw new UnauthorizedError("Authorization Error");
+};
 
 const extractBearerToken = (header) => header.replace("Bearer ", "");
 /* eslint consistent-return: off */
@@ -25,3 +25,4 @@ module.exports = (req, res, next) => {
   req.user = payload;
   next();
 };
+

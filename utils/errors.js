@@ -1,3 +1,5 @@
+const { BadRequestError } = require("./errors/Bad_Request_Error");
+
 const CREATED = 201;
 const OK = 200;
 const BAD_REQUEST = 400;
@@ -7,12 +9,7 @@ const UNAUTHORIZED = 401;
 const REQUEST_CONFLICT = 409;
 const FORBIDDEN = 403;
 
-class BadRequestError extends Error {
-  constructor(message) {
-    super(message);
-    this.statusCode = BAD_REQUEST;
-  }
-}
+
 
 class UnauthorizedError extends Error {
   constructor(message) {
@@ -102,7 +99,7 @@ module.exports = {
   REQUEST_CONFLICT,
   FORBIDDEN,
   errorHandler,
-  BadRequestError,
+
   UnauthorizedError,
   ForbiddenError,
   NotFoundError,

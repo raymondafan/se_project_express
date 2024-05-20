@@ -34,7 +34,6 @@ app.get('/crash-test', () => {
     throw new Error('Server will crash now');
   }, 0);
 });
-
 app.use(mainRouter);
 app.use(errorLogger); // enabling the error logger
 app.use(errors()); // celebrate error handler

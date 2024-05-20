@@ -17,14 +17,14 @@ const {
 router.post("/", validateClothingItemCreation, createItem); // baserul/items
 
 // Read
-router.get("/", validateId, getItems);
+router.get("/", getItems);
 
 // update
 // router.put("/:itemId", updateItem); //baseurl/items/itemid
-router.put("/:itemId/likes", likeItem);
+router.put("/:itemId/likes", validateId, likeItem);
 
 // delete
-router.delete("/:itemId", deleteItem);
-router.delete("/:itemId/likes", unlikeItem);
+router.delete("/:itemId", validateId, deleteItem);
+router.delete("/:itemId/likes", validateId, unlikeItem);
 
 module.exports = router;
