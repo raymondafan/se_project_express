@@ -1,4 +1,6 @@
 const { BadRequestError } = require("./errors/Bad_Request_Error");
+const { UnauthorizedError } = require("./errors/Unauthorized_Error");
+
 
 const CREATED = 201;
 const OK = 200;
@@ -11,19 +13,6 @@ const FORBIDDEN = 403;
 
 
 
-class UnauthorizedError extends Error {
-  constructor(message) {
-    super(message);
-    this.statusCode = UNAUTHORIZED;
-  }
-}
-
-class ForbiddenError extends Error {
-  constructor(message) {
-    super(message);
-    this.statusCode = FORBIDDEN;
-  }
-}
 
 class NotFoundError extends Error {
   constructor(message) {
@@ -100,8 +89,8 @@ module.exports = {
   FORBIDDEN,
   errorHandler,
 
-  UnauthorizedError,
-  ForbiddenError,
+
+
   NotFoundError,
   ConflictError,
 };

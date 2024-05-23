@@ -3,8 +3,9 @@ const {
   OK,
   handleErrors,
   NotFoundError,
-  ForbiddenError,
+
 } = require("../utils/errors");
+const { ForbiddenError } = require("../utils/errors/Forbidden_Error");
 // post request to baseurl/items
 const createItem = (req, res, next) => {
   console.log(req);
