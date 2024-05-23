@@ -1,4 +1,4 @@
-const { UNAUTHORIZED } = require("../errors");
+const UNAUTHORIZED = 401;
 
 class UnauthorizedError extends Error {
   constructor(message) {

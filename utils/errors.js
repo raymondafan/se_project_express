@@ -1,32 +1,12 @@
 const { BadRequestError } = require("./errors/Bad_Request_Error");
+const { ConflictError } = require("./errors/Conflict_Error");
+const { NotFoundError } = require("./errors/Not_Found_Error");
 const { UnauthorizedError } = require("./errors/Unauthorized_Error");
-
 
 const CREATED = 201;
 const OK = 200;
-const BAD_REQUEST = 400;
-const NOT_FOUND = 404;
+
 const INTERNAL_SERVER_ERROR = 500;
-const UNAUTHORIZED = 401;
-const REQUEST_CONFLICT = 409;
-const FORBIDDEN = 403;
-
-
-
-
-class NotFoundError extends Error {
-  constructor(message) {
-    super(message);
-    this.statusCode = NOT_FOUND;
-  }
-}
-
-class ConflictError extends Error {
-  constructor(message) {
-    super(message);
-    this.statusCode = REQUEST_CONFLICT;
-  }
-}
 
 // Error handling middleware
 const errorHandler = (err, req, res, next) => {
@@ -80,19 +60,9 @@ const handleErrors = (err, message, next) => {
 module.exports = {
   handleErrors,
   OK,
-  BAD_REQUEST,
-  NOT_FOUND,
   INTERNAL_SERVER_ERROR,
   CREATED,
-  UNAUTHORIZED,
-  REQUEST_CONFLICT,
-  FORBIDDEN,
   errorHandler,
-
-
-
-  NotFoundError,
-  ConflictError,
 };
 // const errorMessage = "User not found.";
 //     const error = new NotFoundError(errorMessage);

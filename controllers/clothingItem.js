@@ -1,11 +1,7 @@
 const ClothingItem = require("../models/clothingItem");
-const {
-  OK,
-  handleErrors,
-  NotFoundError,
-
-} = require("../utils/errors");
+const { OK, handleErrors } = require("../utils/errors");
 const { ForbiddenError } = require("../utils/errors/Forbidden_Error");
+const { NotFoundError } = require("../utils/errors/Not_Found_Error");
 // post request to baseurl/items
 const createItem = (req, res, next) => {
   console.log(req);
