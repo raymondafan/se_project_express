@@ -1,13 +1,15 @@
-require('dotenv').config();
+require("dotenv").config();
 
 const express = require("express");
-const errorHandler = require("./utils/errors");
+
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
-const mainRouter = require("./routes/index");
 const { errors } = require("celebrate");
+const errorHandler = require("./utils/errors");
+const mainRouter = require("./routes/index");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
+
 const { PORT = 3001 } = process.env;
 
 app.use(cors());
@@ -29,15 +31,15 @@ app.use(express.json());
 
 app.use(requestLogger);
 
-app.get('/crash-test', () => {
+app.get("/crash-test", () => {
   setTimeout(() => {
-    throw new Error('Server will crash now');
+    throw new Error("Server will crash now");
   }, 0);
 });
 app.use(mainRouter);
 app.use(errorLogger); // enabling the error logger
 app.use(errors()); // celebrate error handler
-app.use(errorHandler.errorHandler); //centralized error handler
+app.use(errorHandler.errorHandler); // centralized error handler
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

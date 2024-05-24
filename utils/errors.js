@@ -28,33 +28,34 @@ const errorHandler = (err, req, res, next) => {
 const handleErrors = (err, message, next) => {
   if (err.code === 11000) {
     // mongodb duplicate error
-    const errorMessage = "Duplicate error. " + message;
+    const errorMessage = `Duplicate error. ${  message}`;
     const error = new ConflictError(errorMessage);
     return next(error);
   }
   if (err.name === "ValidationError") {
     // checking if err.name equals "ValidationError"
-    const errorMessage = "Validation error. " + message;
+    const errorMessage = `Validation error. ${  message}`;
     const error = new BadRequestError(errorMessage);
     return next(error);
     // if it does, we send response (400 error)
     // err.message=> message
   }
   if (err.name === "DocumentNotFoundError") {
-    const errorMessage = "User not found. " + message;
+    const errorMessage = `User not found. ${  message}`;
     const error = new NotFoundError(errorMessage);
     return next(error);
   }
   if (err.name === "CastError") {
-    const errorMessage = "Bad request data. " + message;
+    const errorMessage = `Bad request data. ${  message}`;
     const error = new BadRequestError(errorMessage);
     return next(error);
   }
   if (err.message === "Incorrect email or password") {
-    const errorMessage = "Authentication error: " + message;
+    const errorMessage = `Authentication error: ${  message}`;
     const error = new UnauthorizedError(errorMessage);
     return next(error);
   }
+  return next(err);
 };
 
 module.exports = {

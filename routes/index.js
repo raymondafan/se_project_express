@@ -19,7 +19,7 @@ router.use(authorization);
 router.use("/items", clothingItem); // baseUrl/items
 router.use("/users", userRouter);
 
-router.use((req, res) => {
+router.use(() => {
   throw new NotFoundError("Document not found");
 });
 // router works as a subapplication that we can register handlers on
