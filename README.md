@@ -1,14 +1,85 @@
 # WTWR (What to Wear?): Back End
 
-In this project I am working on the basics of creating a Back End server for my Front End React weather app: "What to Wear?". To start off the project I installed express, set up a linter to find errors, installed prettier for eslinter, set up an entry point and a hot reload, and set up what port to run the express app. For the project structure, I created routes, controllers, models for the clothing items and users and a utils file for the error codes. I then crated a database by intalling Mongoose to my project and MongoDB to my computer for testing the server. I also learned to craete Schemas and Models for the users and clothing items. For these two resources I added specific schema fields like name, avatar, weather, imageUrl, etc. I also craeted routes for the user and clothing item resources. For the User routes, I used the GET methodes to return all users and to return a user by _id. I also used the POST method for createing a new user. I did something similar with Clothing Items. For instance I used GET to return all clothing items, POST for creating a new item, and DELETE for deleting items by _id. I also learned to use Postman to run tests to see if my server was working properly/sending back data correctly. throughtout the project I also learned to use middleware which are functions that modify the request and response objects, end the request-response cycle, or call the next middleware function in the stack. In these functions I also learned to handle errors for the specific methods/fields(400, 404, 500). 
-## Running the Project
-`npm run start` — to launch the server 
+### Overview
 
-`npm run dev` — to launch the server with the hot reload feature
+his project focuses on building a backend server for the "What to Wear?" React weather app using Express and MongoDB. The setup includes routes, controllers, models, and utilities for error handling.
 
-### Testing
-Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 12
-### Domain Name
-raymondafanwtwr.strangled.net
-api.raymondafanwtwr.strangled.net
-www.raymondafanwtwr.strangled.net
+I configured the environment with ESLint and Prettier, set up hot reloading, and structured the app with routes for users and clothing items. Using Mongoose, I created schemas and models with fields like name, avatar, weather, and imageUrl. Key API endpoints handle operations like fetching users (GET), creating users (POST), retrieving clothing items (GET), adding items (POST), and deleting items (DELETE).
+
+Testing with Postman ensured API reliability and proper error handling. Middleware functions manage request-response cycles and handle errors (400, 404, 500), contributing to a robust server design.
+
+## Getting Started
+
+1. Clone the Repositories
+   First, clone both the front-end and back-end repositories to your local machine:
+
+```
+git clone https://github.com/raymondafan/se_project_react.git
+```
+
+```
+git clone https://github.com/raymondafan/se_project_express.git
+```
+
+2. Set Up the Back End
+   Navigate to the back-end repository and install the dependencies:
+
+```
+cd se_project_express
+```
+
+```
+npm install
+```
+
+Start the back-end server:
+
+```
+npm run start
+```
+
+Or, for a development server with hot reload:
+
+```
+npm run dev
+```
+
+3. Set Up the Front End
+   Navigate to the front-end repository and install the dependencies:
+
+```
+cd se_project_react
+```
+
+```
+npm install
+```
+
+Ensure the back-end server is running, then start the front-end development server:
+
+```
+npm run start
+```
+
+4. View the Application
+   Once both servers are running, you can view the application by navigating to:
+
+http://localhost:3000
+
+5. Configuration
+   Ensure that the front end is configured to point to the back end. Check the api.js file in the front-end project to verify that the baseUrl is set correctly:
+
+```
+const baseUrl =
+process.env.NODE_ENV === "production"
+? "https://api.raymondafanwtwr.strangled.net"
+: "http://localhost:3001";
+```
+
+**Testing**
+Make sure to edit the sprint.txt file in the root of the back-end folder. The file should contain the number of the sprint you're currently working on. For example, 12.
+
+**Links**
+
+- [Link to the FRONTEND](https://github.com/raymondafan/se_project_react)
+- [Link to the BACKEND](https://github.com/raymondafan/se_project_express)
